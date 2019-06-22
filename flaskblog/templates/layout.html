@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='format.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+    {% if title %}
+        <title>Blog - {{ title }}</title>
+    {% else %}
+        <title>Blog</title>
+    {% endif %}
+</head>
+<body>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top pt-3 pb-3 mb-1">
+        <div class="container">
+          <a class="navbar-brand" href="{{ url_for('main.home_page') }}">James McDowell</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('main.home') }}">Blog<span class="sr-only">(current)</span></a>
+                </li>
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('posts.new_post') }}">Post</a>
+                    </li>
+                    <!--<li class="nav-item">-->
+                        <!--<a class="nav-link" href="{{ url_for('users.account') }}"><img class="rounded-circle nav-img" src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}"></a>-->
+                    <!--</li>-->
+                    <!--<li class="nav-item">-->
+                        <!--<a class="nav-link" href="{{ url_for('users.account') }}">Account</a>-->
+                    <!--</li>-->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('users.logout') }}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('users.register') }}">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('users.login') }}">Login</a>
+                    </li>
+                {% endif %}
+              <!--
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Dropdown
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+              </li>
+              -->
+            </ul>
+            <!--<form class="form-inline my-2 my-lg-0">-->
+              <!--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">-->
+              <!--<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+            <!--</form>-->
+          </div>
+        </div>
+        </nav>
+
+        {% block picture %}{% endblock %}
+
+        <div class="home-category-background">
+            <div class="container-fluid home-category-list home-category-container">
+                <a class="home-category-padding" href="{{ url_for('posts.categories') }}"><img class="icons" src="{{ url_for('static', filename='home_pics/journal.png') }}"></a>
+                {% for cat in cat %}
+                    <a class="home-category-padding" href="{{ url_for('posts.selected_category', category_id=cat.id, category_title=cat.title) }}">{{ cat.title }}</a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <main role="main" class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+
+          <div class="row">
+            <div class="col-md-8">
+              {% block content %}{% endblock %}
+            </div>
+            <div class="col-md-4">
+              <div class="content-section sidebar">
+                <div class="sidebar-container">
+                    <img class="sidebar-image mr-2" src="{{ url_for('static', filename='home_pics/sidebar2.jpg') }}">
+                </div>
+                  <ul class="list-group list-unstyled">
+                    <li class="list-group-item-light pt-3 mb-3 sb-gray">
+                        <ul class="container-fluid list-unstyled">
+                            {% for project in projects %}
+                            <article class="media">
+                                  <div class="media-body">
+                                    <small class="text-muted">{{ project.date_posted.strftime('%Y-%m-%d') }}</small>
+                                    <small class="text-muted"><a class="sideb" href="{{ url_for('posts.selected_category', category_id=project.categ.id, category_title=project.categ.title) }}">{{ project.categ.title }}</a></small>
+                                    <h6 class="truncates"><a class="article-title" href="{{ url_for('posts.post', post_id=project.id) }}">{{ project.title }}</a></h6>
+                                    <p class="truncates">{{ project.content|truncate(140)|striptags  }}</p>
+                                  </div>
+                            </article>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <!--<li class="pt-3 pb-3">-->
+                        <!--<ul class="container-fluid list-unstyled">-->
+                            <!--{% for post in latest_posts %}-->
+                                <!--<li>-->
+                                    <!--{{ post.title|truncate(16) }}-->
+                                <!--</li>-->
+                            <!--{% endfor %}-->
+                        <!--</ul>-->
+                    <!--</li>-->
+                    <li class="pt-3 pb-3">
+                        <ul class="container-fluid list-unstyled">
+                            <h4><b>Popular posts</b></h4>
+                            <hr>
+                            {% for post in featured %}
+                                <article class="media mb-3 mt-3">
+                                      <div class="media-body pt-2 pb-2">
+                                          <h6 class="truncates"><b><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></b></h6>
+                                        <!--<text class="truncates">{{ post.content }}</text>-->
+                                        <a class="mr-2 side_user" href="{{ url_for('users.user_posts', username=post.author.username) }}">{{ post.author.username }}</a><br>
+                                        <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                                          <small><a class="sideb" href="{{ url_for('posts.selected_category', category_id=post.categ.id, category_title=post.categ.title) }}">{{ post.categ.title }}</a></small>
+                                      </div>
+                                </article>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="pt-1 pb-3">
+                        <ul class="container-fluid list-unstyled">
+                            <hr>
+                            <div class="mb-2">
+                                <a class="pr-1 sideb" href="{{ url_for('main.help') }}">Help</a> <a class="pr-1 sideb" href="{{ url_for('main.updates') }}">Updates</a> <a class="pr-1 sideb" href="{{ url_for('main.privacy') }}">Privacy</a> <a class="pr-1 sideb" href="{{ url_for('main.terms') }}">Terms</a> <a class="pr-1 sideb" href="{{ url_for('users.account') }}">Account</a> <a class="pr-1 sideb" href="{{ url_for('main.about') }}">About</a>
+                            </div>
+                        </ul>
+                    </li>
+
+                  </ul>
+              </div>
+            </div>
+          </div>
+        </main>
+    <script type="text/javascript" src="static/scripts.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

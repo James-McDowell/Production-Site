@@ -1,0 +1,47 @@
+{% extends "simple_layout.html" %}
+{% block title %}
+    <h2 class="home-text more-padding pb-3">Computer Science Graduate and Developer</h2>
+    <h4 class="home-text">I love to learn and develop new things</h4>
+{% endblock title %}
+{% block content %}
+<!--<div class="container padding-bt">-->
+    <!--<h2 class="project-title">Hi, I'm James McDowell</h2>-->
+    <!--<h4 class="">I was born and raised in Evansville, Indiana. I love the challenge that comes with learning and developing new solutions to problems. I have a diverse skillset-->
+    <!--</h4>-->
+<!--</div>-->
+<div class="container padding-bt">
+    <h2 class="project-title">Recent Projects</h2>
+    <hr class="personal">
+    <div class="row project-padding">
+        {% for project in projects %}
+            <div class="col-md-4 project-margin">
+                <div class="rounded home-container">
+                    <img class="rounded category-pictures" src="{{ url_for('static', filename='post_pics/' + project.image_file) }}">
+                    <div class="rounded category-pictures overlay">
+                        <a class="home_text" href="{{ url_for('posts.post', post_id=project.id) }}"><div class="text">{{ project.title }}</div></a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="mb-0 padding sb-gray">
+    <div class="container">
+        <div class="row pl-0">
+            <div class="col-md-8">
+                <a href="{{ url_for('main.home') }}"><img class="rounded home-category" src="{{ url_for('static', filename='home_pics/test.jpg') }}"></a>
+            </div>
+            <div class="col-md-4">
+                <div class="vert_center">
+                    <a class="side_user" href="{{ url_for('main.home') }}"><h2 class="mb-4">Visit My Blog</h2></a>
+                    <p>Hi, I'm James McDowell. I was born and raised in Evansville, Indiana and attended the University of Southern Indiana. I love the challenge that comes with learning and developing new solutions to problems.
+                    I'm confident in my abilities and want to continue to add to my diverse set of skills. I am also driven by curiosity and love to explore.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock content %}
